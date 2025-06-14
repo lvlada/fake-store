@@ -6,6 +6,8 @@ import LoginFormContainer from "./components/Login/LoginFormContainer";
 import LoginForm from "./components/Login/LoginForm";
 import NewProductForm from "./components/Products/NewProductForm";
 import NewProductContainer from "./components/Products/NewProductContainer";
+import Item from "./components/Products/Item";
+import ItemContainer from "./components/Products/ItemContainer";
 
 function App() {
   return (
@@ -19,6 +21,9 @@ function App() {
         </Route>
         <Route element={<NewProductContainer/>}>
           <Route path="/addNew" element={<NewProductForm />} />
+        </Route>
+        <Route path ="/product" element = {<ItemContainer />}>
+            <Route path="/product:id" element={<Item/>} />
         </Route>
       </Routes>
        </BrowserRouter>

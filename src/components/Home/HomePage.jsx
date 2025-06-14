@@ -50,10 +50,14 @@ function HomePage() {
     );
   }
 
+  const handleProduct = (id) =>{
+    navigate(`product/${id}`);
+  }
+
   return (
     <div className="product-list">
       <div className="product-header">
-        <h1>Proizvodi</h1>
+        <h1>Svi proizvodi iz prodavnice</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="add-btn" onClick={handleNewProduct}>Dodaj novi</button>
           <button className="logout-btn" onClick={handleLogout}>
@@ -62,7 +66,7 @@ function HomePage() {
         </div>
       </div>
       {products.map((product) => (
-        <div key={product.id} className="product-card">
+        <div key={product.id} className="product-card" onClick={() => handleProduct(product.id)}>
           <img src={product.image} alt={product.title} />
           <div className="product-info">
             <h2>{product.title}</h2>
