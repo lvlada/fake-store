@@ -40,7 +40,7 @@ function HomePage() {
 
   const {
     data: products = [], 
-    isLoading, 
+    isPending, 
     isError, 
     error} = useQuery({
      queryKey: ['products'], 
@@ -53,7 +53,7 @@ function HomePage() {
     ? [location.state.newProduct, ...products]
     : products;
 
-    
+
   // useEffect(()=>{
   //   if(location.state?.newProduct){
   //     setProducts((prev) => [location.state.newProduct, ...prev])
@@ -69,7 +69,7 @@ function HomePage() {
     );
   }
 
-  if (isLoading) return <div style={{ padding: "2rem" }}>Učitavanje proizvoda...</div>
+  if (isPending) return <div style={{ padding: "2rem" }}>Učitavanje proizvoda...</div>
   if (isError) return <div style={{ padding: "2rem" }}>Greška: {error.message}</div>
 
   return (
