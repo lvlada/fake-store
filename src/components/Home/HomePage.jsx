@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { getAllProducts } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "./HomePage.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 
 function HomePage() {
-  const [products, setProducts] = useState([]);
-  const { isAuthenticated } = useAuth();
-  const { logout } = useAuth();
+  // const [products, setProducts] = useState([]);
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,22 +24,41 @@ function HomePage() {
   const handleNewProduct = () =>{
     navigate('/addNew');
   }
+    const handleProduct = (id) =>{
+    navigate(`product/${id}`);
+  }
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      getAllProducts()
-        .then((data) => setProducts(data))
-        .catch((err) =>
-          console.error("Greška prilikom dohvatanja proizvoda:", err)
-        );
-    }
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     getAllProducts()
+  //       .then((data) => setProducts(data))
+  //       .catch((err) =>
+  //         console.error("Greška prilikom dohvatanja proizvoda:", err)
+  //       );
+  //   }
+  // }, [isAuthenticated]);
 
-  useEffect(()=>{
-    if(location.state?.newProduct){
-      setProducts((prev) => [location.state.newProduct, ...prev])
-    }
-  },[location.state?.newProduct])
+  const {
+    data: products = [], 
+    isLoading, 
+    isError, 
+    error} = useQuery({
+     queryKey: ['products'], 
+     queryFn: getAllProducts, 
+     enabled: isAuthenticated
+    });
+
+    const mergeProduct = 
+    location.state?.newProduct && products.length
+    ? [location.state.newProduct, ...products]
+    : products;
+
+    
+  // useEffect(()=>{
+  //   if(location.state?.newProduct){
+  //     setProducts((prev) => [location.state.newProduct, ...prev])
+  //   }
+  // },[location.state?.newProduct])
 
   if (!isAuthenticated) {
     return (
@@ -50,9 +69,8 @@ function HomePage() {
     );
   }
 
-  const handleProduct = (id) =>{
-    navigate(`product/${id}`);
-  }
+  if (isLoading) return <div style={{ padding: "2rem" }}>Učitavanje proizvoda...</div>
+  if (isError) return <div style={{ padding: "2rem" }}>Greška: {error.message}</div>
 
   return (
     <div className="product-list">
@@ -65,7 +83,7 @@ function HomePage() {
           </button>
         </div>
       </div>
-      {products.map((product) => (
+      {mergeProduct.map((product) => (
         <div key={product.id} className="product-card" onClick={() => handleProduct(product.id)}>
           <img src={product.image} alt={product.title} />
           <div className="product-info">
